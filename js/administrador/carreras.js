@@ -1,0 +1,246 @@
+function statement_loading(){
+  var mensaje = '<div class="modal-dialog"><div class="modal-content"><div class="modal-body" align="center"><div class="panel-body"><strong><h2>PROCESANDO LA INFORMACI&Oacute;N</h2></strong><img src="../assets/images/progress.gif" width="150" height="150"></div></div></div></div>';
+  return mensaje;
+}
+
+function load_carreras(){
+  $.ajax({
+    url: 'Carreras/cargar_carreras',
+    type: "POST",
+    beforeSend: function(){
+      $('#carreras').show();
+      $('#carreras').html('<div align="center"><h3>BUSCANDO REGISTROS</h3><img src="../assets/images/progress.gif" width="75" height="75"></div></div>');
+    },
+    success: function (response) {
+      $('#carreras').html(response);
+    }
+  });
+}
+
+function registrar(){
+  $.ajax({
+    url: 'Carreras/agregar_carrera',
+    beforeSend: function(){
+      $('#div_modal').html(statement_loading());
+      $('#div_modal').modal({backdrop: 'static', keyboard: false});
+    },
+    complete: function(){
+      $('#div_modal').html();
+     },
+    success: function (response) {
+      $('#div_modal').html(response);
+    }
+  });
+}
+
+function editar_carrera(id){
+  $.ajax({
+    url: 'Carreras/editar_carrera',
+    type: "POST",
+    data: {id:id},
+    beforeSend: function(){
+      $('#div_modal').html(statement_loading());
+      $('#div_modal').modal({backdrop: 'static', keyboard: false});
+    },
+    complete: function(){
+      $('#div_modal').html();
+     },
+    success: function (response) {
+      $('#div_modal').html(response);
+    }
+  });
+}
+
+function cerrar_modal(){
+  $('#div_modal').modal('hide');
+}
+
+function eliminar_carrera(id){
+  swal({
+    title: '¿Estas seguro?',
+    text: '¿Estas a punto de desactivar la carrera?',
+    type: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#4fb7fe',
+    cancelButtonColor: '#EF6F6C',
+    allowOutsideClick: false,
+    confirmButtonText: 'Si, Desactivar!',
+    cancelButtonText: 'Cancelar'
+  }).then(function () {
+    $.ajax({
+      url: 'Carreras/eliminar_carrera',
+      type: "POST",
+      data: {id:id},
+      beforeSend: function(){
+        $('#myModal').modal('toggle');
+        $('#myModal').modal('show');
+      },
+      complete: function(){
+        $('#myModal').modal('hide');
+      },
+      success: function (response) {
+        if(response == 0){
+          swal({
+            title: 'Exito!',
+            text: 'Carrera Desactivada!',
+            type: 'success',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {
+            load_carreras();
+          });
+        }else {
+          swal({
+            title: 'Ooops !',
+            text: 'Error al desactivar la carrera!',
+            type: 'error',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {  });
+        }
+      }
+    });
+  });
+}
+
+function activar_carrera(id){
+  swal({
+    title: '¿Estas seguro?',
+    text: '¿Estas a punto de activar la carrera?',
+    type: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#4fb7fe',
+    cancelButtonColor: '#EF6F6C',
+    allowOutsideClick: false,
+    confirmButtonText: 'Si, Activar!',
+    cancelButtonText: 'Cancelar'
+  }).then(function () {
+    $.ajax({
+      url: 'Carreras/activar_carrera',
+      type: "POST",
+      data: {id:id},
+      beforeSend: function(){
+        $('#myModal').modal('toggle');
+        $('#myModal').modal('show');
+      },
+      complete: function(){
+        $('#myModal').modal('hide');
+      },
+      success: function (response) {
+        if(response == 0){
+          swal({
+            title: 'Exito!',
+            text: 'Carrera Activada!',
+            type: 'success',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {
+            load_carreras();
+          });
+        }else {
+          swal({
+            title: 'Ooops !',
+            text: 'Error al activar la carrera!',
+            type: 'error',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {  });
+        }
+      }
+    });
+  });
+}
+
+function guardar(){
+  var facultad = $("#facultad").val();
+  var carrera = $("#carrera").val();
+  swal({
+    title: '¿Estas seguro?',
+    text: '¿Estas a punto de guardar la carrera?',
+    type: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#4fb7fe',
+    cancelButtonColor: '#EF6F6C',
+    allowOutsideClick: false,
+    confirmButtonText: 'Si, Agregar!',
+    cancelButtonText: 'Cancelar'
+  }).then(function () {
+    $.ajax({
+      url: 'Carreras/guardar_carrera',
+      type: "POST",
+      data: {facultad:facultad,carrera:carrera},
+      beforeSend: function(){
+        $('#myModal').modal('toggle');
+        $('#myModal').modal('show');
+      },
+      complete: function(){
+        $('#myModal').modal('hide');
+      },
+      success: function (response) {
+        if(response == 0){
+          swal({
+            title: 'Exito!',
+            text: 'Carrera Guardada!',
+            type: 'success',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {
+            cerrar_modal();
+            load_carreras();
+          });
+        }else {
+          swal({
+            title: 'Ooops !',
+            text: 'Error al guardar la carrera!',
+            type: 'error',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {  });
+        }
+      }
+    });
+  });
+}
+
+function editar(id){
+  var facultad = $("#facultad").val();
+  var carrera = $("#carrera").val();
+  swal({
+    title: '¿Estas seguro?',
+    text: '¿Estas a punto de editar la carrera?',
+    type: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#4fb7fe',
+    cancelButtonColor: '#EF6F6C',
+    allowOutsideClick: false,
+    confirmButtonText: 'Si, Editar!',
+    cancelButtonText: 'Cancelar'
+  }).then(function () {
+    $.ajax({
+      url: 'Carreras/editar',
+      type: "POST",
+      data: {id:id,facultad:facultad,carrera:carrera},
+      beforeSend: function(){
+        $('#myModal').modal('toggle');
+        $('#myModal').modal('show');
+      },
+      complete: function(){
+        $('#myModal').modal('hide');
+      },
+      success: function (response) {
+        if(response == 0){
+          swal({
+            title: 'Exito!',
+            text: 'Carrera Editada!',
+            type: 'success',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {
+            cerrar_modal();
+            load_carreras();
+          });
+        }else {
+          swal({
+            title: 'Ooops !',
+            text: 'Error al editar la carrera!',
+            type: 'error',
+            confirmButtonColor: '#ff9933'
+          }).then( function() {  });
+        }
+      }
+    });
+  });
+}
